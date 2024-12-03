@@ -11,13 +11,14 @@ import (
 	"lem-in/models"
 )
 
+
 // ParseFile reads and validates an ant colony configuration file
 func ParseFile(filename string) (*models.AntColony, error) {
 	contents, err := fileContents(filename)
 	if err != nil {
 		return nil, err
 	}
-
+           
 	if len(contents) == 0 {
 		return nil, errors.New("empty file")
 	}
@@ -46,12 +47,12 @@ func ParseFile(filename string) (*models.AntColony, error) {
 			if i+1 >= len(contents) {
 				return nil, errors.New("missing start room definition")
 			}
-			roomName, ok := parseRoom(contents[i+1], colony)
-			if strings.HasPrefix(roomName, "L") {
-				return nil, fmt.Errorf("room cannot start with L : %s", roomName)
+			roomName, err := parseRoom(contents[i+1], colony)
+			if err != nil {
+				return nil, fmt.Errorf("invalid start room: %v", err)
 			}
-			if !ok {
-				return nil, errors.New("invalid start room coordinates")
+			if strings.HasPrefix(roomName, "L") {
+				return nil, fmt.Errorf("room name cannot start with 'L': %s", roomName)
 			}
 			if _, exists := colony.Links[roomName]; exists {
 				return nil, fmt.Errorf("duplicate room name: %s", roomName)
@@ -64,12 +65,12 @@ func ParseFile(filename string) (*models.AntColony, error) {
 			if i+1 >= len(contents) {
 				return nil, errors.New("missing end room definition")
 			}
-			roomName, ok := parseRoom(contents[i+1], colony)
-			if strings.HasPrefix(roomName, "L") {
-				return nil, fmt.Errorf("room cannot start with L : %s", roomName)
+			roomName, err := parseRoom(contents[i+1], colony)
+			if err != nil {
+				return nil, fmt.Errorf("invalid end room: %v", err)
 			}
-			if !ok {
-				return nil, errors.New("invalid end room coordinates")
+			if strings.HasPrefix(roomName, "L") {
+				return nil, fmt.Errorf("room name cannot start with 'L': %s", roomName)
 			}
 			if _, exists := colony.Links[roomName]; exists {
 				return nil, fmt.Errorf("duplicate room name: %s", roomName)
@@ -79,12 +80,12 @@ func ParseFile(filename string) (*models.AntColony, error) {
 			i++ // Skip the next line since we processed it
 
 		case strings.Contains(line, " "):
-			roomName, ok := parseRoom(line, colony)
-			if strings.HasPrefix(roomName, "L") {
-				return nil, fmt.Errorf("room cannot start with L : %s", roomName)
+			roomName, err := parseRoom(line, colony)
+			if err != nil {
+				return nil, fmt.Errorf("invalid room: %v", err)
 			}
-			if !ok {
-				return nil, errors.New("invalid room coordinates")
+			if strings.HasPrefix(roomName, "L") {
+				return nil, fmt.Errorf("room name cannot start with 'L': %s", roomName)
 			}
 			if _, exists := colony.Links[roomName]; exists {
 				return nil, fmt.Errorf("duplicate room name: %s", roomName)
@@ -96,9 +97,8 @@ func ParseFile(filename string) (*models.AntColony, error) {
 				return nil, err
 			}
 		default:
-			return nil, fmt.Errorf("unrecognized command, room or link: %s", line)
+			return nil, fmt.Errorf("unrecognized command, room, or link: %s", line)
 		}
-
 	}
 
 	// Validate colony configuration
@@ -135,26 +135,26 @@ func fileContents(filename string) ([]string, error) {
 }
 
 // parseRoom parses a room definition line and adds it to the colony
-func parseRoom(line string, colony *models.AntColony) (string, bool) {
+func parseRoom(line string, colony *models.AntColony) (string, error) {
 	parts := strings.Split(line, " ")
 	if len(parts) != 3 {
-		return "", false
+		return "", errors.New("invalid room format")
 	}
 
 	x, err := strconv.Atoi(parts[1])
 	if err != nil {
-		return "", false
+		return "", fmt.Errorf("invalid X coordinate: %v", err)
 	}
 
 	y, err := strconv.Atoi(parts[2])
 	if err != nil {
-		return "", false
+		return "", fmt.Errorf("invalid Y coordinate: %v", err)
 	}
 
 	// Check for duplicate coordinates
 	for _, room := range colony.Rooms {
 		if room.Coord_X == x && room.Coord_Y == y {
-			return "", false
+			return "", errors.New("duplicate room coordinates")
 		}
 	}
 
@@ -164,7 +164,7 @@ func parseRoom(line string, colony *models.AntColony) (string, bool) {
 		Coord_Y: y,
 	}
 	colony.Rooms = append(colony.Rooms, room)
-	return room.Name, true
+	return room.Name, nil
 }
 
 // parseConnection parses a room connection line and adds it to the colony

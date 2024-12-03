@@ -2,28 +2,33 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"lem-in/models"
 	"lem-in/utils"
 )
 
 func main() {
-	filename, errmsg := utils.ParseArgs()
-	if errmsg != "" {
-		fmt.Println(errmsg)
+	if len(os.Args) != 2 {
+		fmt.Println("Usage: go run main.go file.txt")
 		return
 	}
-	Antcolony, err := utils.ParseFile(filename)
+	filename := os.Args[1]
+	// Parse the file
+	colony, err := utils.ParseFile(filename)
 	if err != nil {
 		fmt.Println("ERROR: invalid data format,", err)
 		return
 	}
-	paths, antsperpath, turns := utils.FindPaths(Antcolony)
-	moves := utils.MoveAnts(paths, antsperpath, turns)
+
+	// Find paths and determine moves
+	paths, antsPerPath, turns := utils.FindPaths(colony)
+	moves := utils.MoveAnts(paths, antsPerPath, turns)
 
 	// Print the file contents
 	fmt.Println(models.FileContents)
 
+	// Print the moves
 	for _, move := range moves {
 		fmt.Println(move)
 	}
