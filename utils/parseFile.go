@@ -136,9 +136,14 @@ func fileContents(filename string) ([]string, error) {
 
 // parseRoom parses a room definition line and adds it to the colony
 func parseRoom(line string, colony *models.AntColony) (string, error) {
-	parts := strings.Split(line, " ")
+	parts := strings.Fields(line)
 	if len(parts) != 3 {
-		return "", errors.New("invalid room format")
+		return "", fmt.Errorf("invalid room format")
+	}
+
+	name := parts[0]
+	if err := validateRoomName(name); err != nil {
+		return "", err
 	}
 
 	x, err := strconv.Atoi(parts[1])
@@ -200,10 +205,10 @@ func parseConnection(line string, colony *models.AntColony) error {
 // validateColony performs final validation of the colony configuration
 func validateColony(colony *models.AntColony) error {
 	if colony.Start == "" {
-		return errors.New("no colony starting point defined")
+		return errors.New("no start room found")
 	}
 	if colony.End == "" {
-		return errors.New("no colony ending point defined")
+		return errors.New("no end room found")
 	}
 
 	// Verify start and end rooms exist in links
@@ -214,5 +219,12 @@ func validateColony(colony *models.AntColony) error {
 		return errors.New("end room not found in connections")
 	}
 
+	return nil
+}
+// validateRoomName checks if a room name is valid
+func validateRoomName(name string) error {
+	if name[0] == 'L' || name[0] == '#' || strings.Contains(name, " ") {
+		return fmt.Errorf("invalid room name: %s", name)
+	}
 	return nil
 }
