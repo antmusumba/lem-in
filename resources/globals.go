@@ -1,4 +1,4 @@
-package models
+package resources
 
 type AntColony struct {
 	NumberOfAnts int

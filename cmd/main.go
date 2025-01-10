@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"lem-in/models"
+	"lem-in/resources"
 	"lem-in/utils"
 )
 
@@ -26,7 +26,7 @@ func main() {
 	moves := utils.MoveAnts(paths, antsPerPath, turns)
 
 	// Print the file contents
-	fmt.Println(models.FileContents)
+	fmt.Println(resources.FileContents)
 
 	// Print the moves
 	for _, move := range moves {
