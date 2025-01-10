@@ -1,9 +1,9 @@
 package utils
 
-import "lem-in/models"
+import "lem-in/resources"
 
 // PlaceAnts assigns ants to paths in the colony and returns a map of path indices to the ants assigned to them.
-func PlaceAnts(colony *models.AntColony, paths []models.Path) map[int][]int {
+func PlaceAnts(colony *resources.AntColony, paths []resources.Path) map[int][]int {
 	totalAnts := colony.NumberOfAnts
 	pathAssignments := make(map[int][]int)
 
@@ -15,12 +15,12 @@ func PlaceAnts(colony *models.AntColony, paths []models.Path) map[int][]int {
 }
 
 // placeAnt attempts to place an ant on a path recursively, ensuring an optimal distribution of ants.
-func placeAnt(ant int, paths []models.Path, pathAssignments map[int][]int) bool {
+func placeAnt(ant int, paths []resources.Path, pathAssignments map[int][]int) bool {
 	return placeAntHelper(ant, paths, pathAssignments, 0)
 }
 
 // placeAntHelper is a recursive helper function for placing ants optimally across paths.
-func placeAntHelper(ant int, paths []models.Path, pathAssignments map[int][]int, currentPath int) bool {
+func placeAntHelper(ant int, paths []resources.Path, pathAssignments map[int][]int, currentPath int) bool {
 	// Base case: Assign to the last path if it's the only choice
 	if currentPath == len(paths)-1 {
 		pathAssignments[currentPath] = append(pathAssignments[currentPath], ant)

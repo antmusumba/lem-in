@@ -1,9 +1,9 @@
 package utils
 
-import "lem-in/models"
+import "lem-in/resources"
 
 // GenerateTurns calculates the maximum number of turns any path can have in the given options.
-func GenerateTurns(option map[int][]int, paths []models.Path) int {
+func GenerateTurns(option map[int][]int, paths []resources.Path) int {
 	maxTurns := 0
 
 	// Iterate through each path and calculate the number of turns

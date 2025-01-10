@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"lem-in/models"
+	"lem-in/resources"
 )
 
 // FindPaths finds all possible paths from start to end using BFS.
-func FindPaths(colony *models.AntColony) ([]models.Path, map[int][]int, int) {
-	paths := []models.Path{}
+func FindPaths(colony *resources.AntColony) ([]resources.Path, map[int][]int, int) {
+	paths := []resources.Path{}
 	queue := [][]string{}
 	queue = append(queue, []string{colony.Start})
 
@@ -20,7 +20,7 @@ func FindPaths(colony *models.AntColony) ([]models.Path, map[int][]int, int) {
 
 		// If we've reached the end, add the path to allPaths
 		if currentRoom == colony.End {
-			paths = append(paths, models.Path{Rooms: currentPath})
+			paths = append(paths, resources.Path{Rooms: currentPath})
 			continue
 		}
 
@@ -49,7 +49,7 @@ func containsRoom(path []string, room string) bool {
 }
 
 // ChooseOptimumPath selects the optimum paths based on the number of turns.
-func ChooseOptimumPath(paths []models.Path, colony *models.AntColony) ([]models.Path, map[int][]int, int) {
+func ChooseOptimumPath(paths []resources.Path, colony *resources.AntColony) ([]resources.Path, map[int][]int, int) {
 	shortest1 := OptimizedPaths1(paths)
 	shortest2 := OptimizedPaths2(paths, colony)
 	firstop := PlaceAnts(colony, shortest1)
@@ -65,8 +65,8 @@ func ChooseOptimumPath(paths []models.Path, colony *models.AntColony) ([]models.
 }
 
 // OptimizedPaths1 filters paths that don't share rooms.
-func OptimizedPaths1(paths []models.Path) []models.Path {
-	optimized := []models.Path{paths[0]}
+func OptimizedPaths1(paths []resources.Path) []resources.Path {
+	optimized := []resources.Path{paths[0]}
 	for i := 1; i < len(paths); i++ {
 		if Check(paths[i].Rooms, optimized) {
 			optimized = append(optimized, paths[i])
@@ -76,7 +76,7 @@ func OptimizedPaths1(paths []models.Path) []models.Path {
 }
 
 // Check verifies if a path shares any rooms with already optimized paths (excluding start/end).
-func Check(path []string, optimized []models.Path) bool {
+func Check(path []string, optimized []resources.Path) bool {
 	// Use a map for faster lookups
 	visitedRooms := make(map[string]struct{})
 	for _, optpath := range optimized {
@@ -94,9 +94,9 @@ func Check(path []string, optimized []models.Path) bool {
 }
 
 // OptimizedPaths2 filters paths based on colony's ant count and unique room usage.
-func OptimizedPaths2(paths []models.Path, colony *models.AntColony) []models.Path {
+func OptimizedPaths2(paths []resources.Path, colony *resources.AntColony) []resources.Path {
 	half := colony.NumberOfAnts / 2
-	optimized := []models.Path{paths[0]}
+	optimized := []resources.Path{paths[0]}
 
 	for i := 1; i < len(paths); i++ {
 		if len(paths[i].Rooms)-1 <= half { // Exclude start and end rooms
@@ -115,7 +115,7 @@ func OptimizedPaths2(paths []models.Path, colony *models.AntColony) []models.Pat
 }
 
 // Check2 checks if a path is unique and does not share rooms with existing paths.
-func Check2(path []string, optimized []models.Path) (bool, int) {
+func Check2(path []string, optimized []resources.Path) (bool, int) {
 	for i, optpath := range optimized {
 		for _, room := range path[1 : len(path)-1] { // Exclude start and end rooms
 			for _, optRoom := range optpath.Rooms[1 : len(optpath.Rooms)-1] {
@@ -129,6 +129,6 @@ func Check2(path []string, optimized []models.Path) (bool, int) {
 }
 
 // Remove removes a path from the optimized slice by index.
-func Remove(optimized []models.Path, index int) []models.Path {
+func Remove(optimized []resources.Path, index int) []resources.Path {
 	return append(optimized[:index], optimized[index+1:]...)
 }

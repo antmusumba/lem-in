@@ -8,12 +8,11 @@ import (
 	"strconv"
 	"strings"
 
-	"lem-in/models"
+	"lem-in/resources"
 )
 
-
 // ParseFile reads and validates an ant colony configuration file
-func ParseFile(filename string) (*models.AntColony, error) {
+func ParseFile(filename string) (*resources.AntColony, error) {
 	contents, err := fileContents(filename)
 	if err != nil {
 		return nil, err
@@ -23,8 +22,8 @@ func ParseFile(filename string) (*models.AntColony, error) {
 		return nil, errors.New("empty file")
 	}
 
-	colony := &models.AntColony{
-		Rooms: make([]models.Room, 0),
+	colony := &resources.AntColony{
+		Rooms: make([]resources.Room, 0),
 		Links: make(map[string][]string),
 	}
 
@@ -123,7 +122,7 @@ func fileContents(filename string) ([]string, error) {
 		text := scanner.Text()
 		if text != "" && (!strings.HasPrefix(text, "#") || strings.HasPrefix(text, "##end") || strings.HasPrefix(text, "##start")) {
 			lines = append(lines, text)
-			models.FileContents += text + "\n"
+			resources.FileContents += text + "\n"
 		}
 	}
 
@@ -135,7 +134,7 @@ func fileContents(filename string) ([]string, error) {
 }
 
 // parseRoom parses a room definition line and adds it to the colony
-func parseRoom(line string, colony *models.AntColony) (string, error) {
+func parseRoom(line string, colony *resources.AntColony) (string, error) {
 	parts := strings.Fields(line)
 	if len(parts) != 3 {
 		return "", fmt.Errorf("invalid room format")
@@ -163,7 +162,7 @@ func parseRoom(line string, colony *models.AntColony) (string, error) {
 		}
 	}
 
-	room := models.Room{
+	room := resources.Room{
 		Name:    parts[0],
 		Coord_X: x,
 		Coord_Y: y,
@@ -173,7 +172,7 @@ func parseRoom(line string, colony *models.AntColony) (string, error) {
 }
 
 // parseConnection parses a room connection line and adds it to the colony
-func parseConnection(line string, colony *models.AntColony) error {
+func parseConnection(line string, colony *resources.AntColony) error {
 	parts := strings.Split(line, "-")
 	if len(parts) != 2 || parts[0] == parts[1] {
 		return errors.New("invalid room connection")
@@ -189,12 +188,12 @@ func parseConnection(line string, colony *models.AntColony) error {
 
 	link := strings.Join(parts, "")
 	link2 := parts[1] + parts[0]
-	if _, exists := models.Existinglink[link]; exists {
+	if _, exists := resources.Existinglink[link]; exists {
 		return fmt.Errorf("duplicate room connection: %s", link)
 	}
 
-	models.Existinglink[link] = true
-	models.Existinglink[link2] = true
+	resources.Existinglink[link] = true
+	resources.Existinglink[link2] = true
 
 	// Add bidirectional connection
 	colony.Links[parts[0]] = append(colony.Links[parts[0]], parts[1])
@@ -203,7 +202,7 @@ func parseConnection(line string, colony *models.AntColony) error {
 }
 
 // validateColony performs final validation of the colony configuration
-func validateColony(colony *models.AntColony) error {
+func validateColony(colony *resources.AntColony) error {
 	if colony.Start == "" {
 		return errors.New("no start room found")
 	}

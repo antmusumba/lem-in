@@ -3,12 +3,12 @@ package utils
 import (
 	"fmt"
 	"strings"
-	"lem-in/models"
+	"lem-in/resources"
 )
 
 // MoveAnts generates a slice of moves indicating the paths taken by each ant.
 // Each move is represented as a string "L<ant>-<room>".
-func MoveAnts(paths []models.Path, antsPerRoom map[int][]int, totalTurns int) []string {
+func MoveAnts(paths []resources.Path, antsPerRoom map[int][]int, totalTurns int) []string {
 	moves := make([]string, totalTurns)
 
 	for pathIndex, path := range paths {
