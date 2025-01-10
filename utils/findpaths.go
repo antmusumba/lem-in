@@ -6,14 +6,9 @@ import (
 
 // FindPaths finds all possible paths from start to end using BFS.
 func FindPaths(colony *models.AntColony) ([]models.Path, map[int][]int, int) {
-	var allPaths []models.Path
-	var queue [][]string
+	paths := []models.Path{}
+	queue := [][]string{}
 	queue = append(queue, []string{colony.Start})
-
-	// Reset IsVisited flag for all rooms
-	for i := range colony.Rooms {
-		colony.Rooms[i].IsVisited = false
-	}
 
 	// BFS loop
 	for len(queue) > 0 {
@@ -25,7 +20,7 @@ func FindPaths(colony *models.AntColony) ([]models.Path, map[int][]int, int) {
 
 		// If we've reached the end, add the path to allPaths
 		if currentRoom == colony.End {
-			allPaths = append(allPaths, models.Path{Rooms: currentPath})
+			paths = append(paths, models.Path{Rooms: currentPath})
 			continue
 		}
 
@@ -40,7 +35,7 @@ func FindPaths(colony *models.AntColony) ([]models.Path, map[int][]int, int) {
 		}
 	}
 
-	return ChooseOptimumPath(allPaths, colony)
+	return ChooseOptimumPath(paths, colony)
 }
 
 // Helper function to check if a room is in the path
