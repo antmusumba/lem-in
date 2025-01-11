@@ -28,8 +28,8 @@ func placeAntHelper(ant int, paths []resources.Path, pathAssignments map[int][]i
 	}
 
 	// Calculate distribution cost (rooms + ants already assigned) for the current and next paths
-	currentPathLoad := len(paths[currentPath].Rooms) - 2 + len(pathAssignments[currentPath])
-	nextPathLoad := len(paths[currentPath+1].Rooms) - 2 + len(pathAssignments[currentPath+1])
+	currentPathLoad := len(paths[currentPath].RoomsInThePath) - 2 + len(pathAssignments[currentPath])
+	nextPathLoad := len(paths[currentPath+1].RoomsInThePath) - 2 + len(pathAssignments[currentPath+1])
 
 	// Assign to the less costly path
 	if currentPathLoad > nextPathLoad {

@@ -9,7 +9,7 @@ func GenerateTurns(option map[int][]int, paths []resources.Path) int {
 	// Iterate through each path and calculate the number of turns
 	for i, path := range paths {
 		// The number of rooms excluding the start room
-		rooms := len(path.Rooms) - 1
+		rooms := len(path.RoomsInThePath) - 1
 		// The number of ants for the current path
 		ants := len(option[i])
 		// Calculate turns: rooms + ants - 1

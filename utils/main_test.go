@@ -22,7 +22,7 @@ func TestGenerateTurns(t *testing.T) {
 			args: args{
 				option: map[int][]int{0: {3}},
 				paths: []resources.Path{
-					{Rooms: []string{"1", "2", "3"}},
+					{RoomsInThePath: []string{"1", "2", "3"}},
 				},
 			},
 			want: 2,
@@ -32,8 +32,8 @@ func TestGenerateTurns(t *testing.T) {
 			args: args{
 				option: map[int][]int{0: {2}, 1: {1}},
 				paths: []resources.Path{
-					{Rooms: []string{"1", "2", "3"}},
-					{Rooms: []string{"1", "4", "3"}},
+					{RoomsInThePath: []string{"1", "2", "3"}},
+					{RoomsInThePath: []string{"1", "4", "3"}},
 				},
 			},
 			want: 2,
@@ -43,8 +43,8 @@ func TestGenerateTurns(t *testing.T) {
 			args: args{
 				option: map[int][]int{0: {3}, 1: {1}},
 				paths: []resources.Path{
-					{Rooms: []string{"1", "2", "3"}},
-					{Rooms: []string{"1", "4", "5", "3"}},
+					{RoomsInThePath: []string{"1", "2", "3"}},
+					{RoomsInThePath: []string{"1", "4", "5", "3"}},
 				},
 			},
 			want: 3,

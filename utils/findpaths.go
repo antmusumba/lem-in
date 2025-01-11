@@ -20,15 +20,14 @@ func FindPaths(colony *resources.AntColony) ([]resources.Path, map[int][]int, in
 
 		// If we've reached the end, add the path to allPaths
 		if currentRoom == colony.End {
-			paths = append(paths, resources.Path{Rooms: currentPath})
+			paths = append(paths, resources.Path{RoomsInThePath: currentPath})
 			continue
 		}
 
 		// Explore adjacent rooms
 		for _, nextRoom := range colony.Links[currentRoom] {
 			if !containsRoom(currentPath, nextRoom) {
-				// Create a new path by copying the current path and appending the next room
-				newPath := append([]string(nil), currentPath...) // Efficient copy
+				newPath := append([]string(nil), currentPath...)
 				newPath = append(newPath, nextRoom)
 				queue = append(queue, newPath)
 			}
@@ -68,7 +67,7 @@ func ChooseOptimumPath(paths []resources.Path, colony *resources.AntColony) ([]r
 func OptimizedPaths1(paths []resources.Path) []resources.Path {
 	optimized := []resources.Path{paths[0]}
 	for i := 1; i < len(paths); i++ {
-		if Check(paths[i].Rooms, optimized) {
+		if Check(paths[i].RoomsInThePath, optimized) {
 			optimized = append(optimized, paths[i])
 		}
 	}
@@ -80,7 +79,7 @@ func Check(path []string, optimized []resources.Path) bool {
 	// Use a map for faster lookups
 	visitedRooms := make(map[string]struct{})
 	for _, optpath := range optimized {
-		for _, room := range optpath.Rooms[1 : len(optpath.Rooms)-1] { // Ignore start and end rooms
+		for _, room := range optpath.RoomsInThePath[1 : len(optpath.RoomsInThePath)-1] { // Ignore start and end rooms
 			visitedRooms[room] = struct{}{}
 		}
 	}
@@ -99,11 +98,11 @@ func OptimizedPaths2(paths []resources.Path, colony *resources.AntColony) []reso
 	optimized := []resources.Path{paths[0]}
 
 	for i := 1; i < len(paths); i++ {
-		if len(paths[i].Rooms)-1 <= half { // Exclude start and end rooms
-			unique, index := Check2(paths[i].Rooms, optimized)
+		if len(paths[i].RoomsInThePath)-1 <= half { // Exclude start and end rooms
+			unique, index := Check2(paths[i].RoomsInThePath, optimized)
 			if !unique {
 				// Replace path if lengths differ
-				if len(optimized[index].Rooms) != len(paths[i].Rooms) {
+				if len(optimized[index].RoomsInThePath) != len(paths[i].RoomsInThePath) {
 					optimized[index] = paths[i] // Efficient path replacement
 				}
 			} else {
@@ -118,7 +117,7 @@ func OptimizedPaths2(paths []resources.Path, colony *resources.AntColony) []reso
 func Check2(path []string, optimized []resources.Path) (bool, int) {
 	for i, optpath := range optimized {
 		for _, room := range path[1 : len(path)-1] { // Exclude start and end rooms
-			for _, optRoom := range optpath.Rooms[1 : len(optpath.Rooms)-1] {
+			for _, optRoom := range optpath.RoomsInThePath[1 : len(optpath.RoomsInThePath)-1] {
 				if room == optRoom {
 					return false, i
 				}

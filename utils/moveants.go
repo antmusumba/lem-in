@@ -14,7 +14,7 @@ func MoveAnts(paths []resources.Path, antsPerRoom map[int][]int, totalTurns int)
 	for pathIndex, path := range paths {
 		ants := antsPerRoom[pathIndex] // Ants assigned to this path
 		for antIndex, ant := range ants {
-			for turnOffset, room := range path.Rooms[1:] {
+			for turnOffset, room := range path.RoomsInThePath[1:] {
 				moveIndex := antIndex + turnOffset
 				if moveIndex >= totalTurns {
 					break // Avoid out-of-bounds issues
